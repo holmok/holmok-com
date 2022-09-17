@@ -21,7 +21,6 @@ export interface JwtOptions {
   cookieName: string
 }
 
-export const baseUrl = 'http://localhost:3001'
 export const environment = process.env.NODE_ENV ?? 'development'
 export const dev = environment !== 'production'
 export const name = 'holmok.com'

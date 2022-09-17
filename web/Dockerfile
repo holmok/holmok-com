@@ -7,9 +7,7 @@ COPY ./yarn.lock ./
 
 RUN yarn install --prod --frozen-lockfile
 
-COPY build ./build/
-COPY public ./public/
-COPY server.js ./
+COPY dist ./dist/
 
 ENV NODE_ENV=production
 ENTRYPOINT ["yarn" ,"start"]
