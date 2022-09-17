@@ -1,0 +1,6 @@
+{{extend '../layouts/basic.art'}}
+{{block 'content'}}
+<h1>Title</h1>
+{{include '../partials/errors.art'}}
+{{include '../partials/status.art'}}
+{{/block}}

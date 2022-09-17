@@ -1,0 +1,13 @@
+{
+    "name": "holmok-com",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^14",
+        "ts-standard": "^11.0.0"
+    },
+    "dependencies": {
+        "@pulumi/cloudflare": "^4.10.0",
+        "@pulumi/gcp": "^6.0.0",
+        "@pulumi/pulumi": "^3.0.0"
+    }
+}

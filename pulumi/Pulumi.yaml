@@ -1,0 +1,3 @@
+name: holmok-com
+runtime: nodejs
+description: holmok.com running on gcp

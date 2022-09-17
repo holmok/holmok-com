@@ -1,0 +1,42 @@
+{{extend '../layouts/basic.art'}}
+{{block 'content'}}
+<h1>Photo Category</h1>
+{{include '../partials/errors.art'}}
+{{include '../partials/status.art'}}
+
+<form method="post">
+<label for="name">Name</label>
+<input class="u-full-width" type="text" placeholder="Category name..." id="name" name="name" value="{{category?.name}}">
+<label for="stub">Stub</label>
+<input class="u-full-width" type="text" placeholder="Category stub..." id="stub" name="stub" value="{{category?.stub}}">
+<label for="destription">Description</label>
+<textarea class="u-full-width" placeholder="Category description" id="destription" name="description">{{category?.description}}</textarea>
+<div class="row">
+<div class="two columns">
+{{if category}}
+<label class="u-full-width">
+<input type="checkbox" name="active" id="active" {{if category?.active}}checked{{/if}}>
+<span class="active">Active</span>
+{{else}}
+&nbsp;
+{{/if}}
+</label>
+</div>
+<div class="two columns">
+{{if category}}
+<label class="u-full-width">
+<input type="checkbox" name="deleted" id="deleted" {{if category?.deleted}}checked{{/if}}>
+<span class="deleted">Deleted</span>
+{{else}}
+&nbsp;
+{{/if}}
+</label>
+</div>
+<div class="eight columns right-align">
+<input class="button-primary" type="submit" value="Submit">
+<a href="/admin/photo-categories" class="button">Cancel</a>
+</div>
+</div>
+
+</form>
+{{/block}}

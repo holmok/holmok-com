@@ -1,0 +1,66 @@
+version: 2.1
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.15.0
+  node: circleci/node@5.0.2
+  pulumi: pulumi/pulumi@2.1.0
+jobs:
+  build-app:
+      docker:
+        - image: 'cimg/base:stable'
+      steps:
+        - checkout
+        - node/install:
+            install-yarn: true
+            node-version: '16.13'
+        - run: cd pulumi && npm install
+        - run: cd web && yarn install --frozen-lockfile
+        - run: cd web && yarn build
+        - persist_to_workspace:
+            root: /home/circleci/project
+            paths:
+              - web
+              - pulumi
+  build-image-and-push:
+    executor: gcp-gcr/default
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          docker-context: ./web
+          path: ./web
+          workspace-root: ./web
+          image: holmok-com
+          tag: v$CIRCLE_BUILD_NUM
+          no_output_timeout: 20m
+          registry-url: us.gcr.io
+      - gcp-gcr/push-image:
+          image: holmok-com
+          registry-url: us.gcr.io
+          tag: v$CIRCLE_BUILD_NUM
+      - gcp-gcr/tag-image:
+          image: holmok-com
+          registry-url: us.gcr.io
+          source-tag: v$CIRCLE_BUILD_NUM
+          target-tag: latest 
+  build-infra:
+    docker:
+      - image: 'circleci/node:10'
+    working_directory: /home/circleci/project
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project 
+      - pulumi/login
+      - pulumi/update:
+          stack:  main
+          working_directory: /home/circleci/project/pulumi
+workflows:
+  main-branch-commit:
+    jobs:
+      - build-app
+      - build-image-and-push: 
+          requires:
+              - build-app
+      - build-infra:
+          requires:
+              - build-image-and-push
