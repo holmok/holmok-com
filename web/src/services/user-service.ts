@@ -2,8 +2,24 @@ import UserData, { UserDataError, UserRow } from '../data/user-data'
 import { z } from 'zod'
 import Pino from 'pino'
 import Config from 'config'
-import Bcrypt from 'bcrypt'
 import Uniquey from 'uniquey'
+import Crypto from 'crypto'
+
+function hash (password: string, saltRounds: number): string {
+  let value = password
+  for (let i = 0; i < saltRounds; i++) {
+    value = Crypto.createHash('sha256').update(password).digest('hex')
+  }
+  return value
+}
+
+function compare (password: string, hash: string, saltRounds: number): boolean {
+  let value = password
+  for (let i = 0; i < saltRounds; i++) {
+    value = Crypto.createHash('sha256').update(password).digest('hex')
+  }
+  return value === hash
+}
 
 const userSchema = z.object({
   id: z.number(),
@@ -138,7 +154,8 @@ export default class UserService {
     try {
       const output = await this.data.getByEmail(email)
       if (output == null) throw new UserServiceError('Invalid email or password')
-      const valid = await Bcrypt.compare(password, output.passwordHash)
+      const saltRounds = this.config.get<number>('saltRounds')
+      const valid = compare(password, output.passwordHash, saltRounds)
       if (!valid) throw new UserServiceError('Invalid email or password')
       return this.mapUser(output)
     } catch (error) {
@@ -152,7 +169,7 @@ export default class UserService {
     const stub = uniquey.create()
     try {
       const saltRounds = this.config.get<number>('saltRounds')
-      const passwordHash = await Bcrypt.hash(password, saltRounds)
+      const passwordHash = hash(password, saltRounds)
       const output = await this.data.create(username, stub, email, passwordHash)
       return this.mapUser(output)
     } catch (error: any) {
@@ -171,10 +188,10 @@ export default class UserService {
       if (oldUser == null) throw new UserServiceError('User not found')
       let passwordHash: string | undefined
       if (user.newPassword != null && user.oldPassword != null) {
-        const valid = await Bcrypt.compare(user.oldPassword, oldUser.passwordHash)
-        if (!valid) throw new UserServiceError('Invalid old password')
         const saltRounds = this.config.get<number>('saltRounds')
-        passwordHash = await Bcrypt.hash(user.newPassword, saltRounds)
+        const valid = compare(user.oldPassword, oldUser.passwordHash, saltRounds)
+        if (!valid) throw new UserServiceError('Invalid old password')
+        passwordHash = hash(user.newPassword, saltRounds)
       }
       const output = await this.data.update({
         id: user.id,

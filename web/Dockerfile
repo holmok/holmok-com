@@ -7,7 +7,15 @@ COPY ./yarn.lock ./
 
 RUN yarn install --prod --frozen-lockfile
 
-COPY dist ./dist/
+COPY dist/src ./src
+COPY dist/static ./static
+COPY dist/templates ./templates
+COPY dist/config ./config
 
+ENV PORT=3000
 ENV NODE_ENV=production
-ENTRYPOINT ["yarn" ,"start"]
+ENV HOST=0.0.0.0
+
+EXPOSE ${PORT}
+
+ENTRYPOINT ["node" ,"src/index.js"]
