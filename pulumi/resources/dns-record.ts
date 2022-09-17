@@ -1,7 +1,7 @@
 import { GlobalAddress } from '@pulumi/gcp/compute'
 import { Record, Zone } from '@pulumi/cloudflare'
 
-export function CreateNewARecord (address: GlobalAddress, zone: Zone, name:string): Record {
+export function CreateNewARecord (address: GlobalAddress, zone: Zone, name: string): Record {
   return new Record(`${name}-a-record`, {
     name,
     proxied: true,
@@ -12,8 +12,7 @@ export function CreateNewARecord (address: GlobalAddress, zone: Zone, name:strin
   }, { dependsOn: [address, zone] })
 }
 
-
-export function CreateNewCNAMERecord (value:string, zone: Zone, name:string): Record {
+export function CreateNewCNAMERecord (value: string, zone: Zone, name: string): Record {
   return new Record(`${name}-cname-record`, {
     name,
     proxied: true,

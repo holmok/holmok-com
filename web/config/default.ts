@@ -58,7 +58,7 @@ export const pino: LoggerOptions = {
 
 export const server: ServerOptions = {
   host: process.env.HOST ?? 'localhost',
-  port: parseInt(process.env.PORT ?? '3001', 10)
+  port: parseInt(process.env.PORT ?? '3000', 10)
 }
 
 export const knex: Knex.Config = {

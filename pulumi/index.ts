@@ -6,8 +6,15 @@ import { CreateTargetHttpProxy } from './resources/http-target-proxy'
 import { CreateURLMap } from './resources/url-map'
 import { CreateStaticAddress } from './resources/address'
 import { CreateNewARecord, CreateNewCNAMERecord, CreateNewDNSZone } from './resources/dns-record'
+import { CreatePostgresInstance, CreatePostgresUser } from './resources/postgres'
+import { Config } from '@pulumi/pulumi'
 
-const service = CreateService()
+const config = new Config()
+
+const pgInstance = CreatePostgresInstance()
+const pgUser = CreatePostgresUser(pgInstance)
+
+const service = CreateService(config)
 const neg = CreateNetworkEndpointGroup(service)
 const backendService = CreateBackendService(neg)
 const urlMap = CreateURLMap(backendService)
@@ -19,6 +26,8 @@ const aRecord = CreateNewARecord(address, zone, 'holmok.com')
 const cname = CreateNewCNAMERecord('holmok.com', zone, 'www')
 
 export const output = {
+  pgInstance: { urn: pgInstance.urn },
+  pgUser: { urn: pgUser.urn },
   zone: { id: zone.id, name: zone.zone },
   aRecord: { id: aRecord.id, name: aRecord.name },
   cname: { id: cname.id, name: cname.name },
