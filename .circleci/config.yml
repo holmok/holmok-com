@@ -13,11 +13,8 @@ jobs:
             install-yarn: true
             node-version: '16.14'
         - run: cd pulumi && npm install
-        - run: cd web && yarn
-        - run: cd web && yarn build
-        - run: ls -alh web/dist
-        - run: ls -alh web
-        - run: cat web/tsconfig.json
+        - run: cd web && yarn --frozen-lockfile
+        - run: cd web && yarn build:linux
         - persist_to_workspace:
             root: /home/circleci/project
             paths:
@@ -64,6 +61,6 @@ workflows:
       - build-image-and-push: 
           requires:
               - build-app
-      # - build-infra:
-      #     requires:
-      #         - build-image-and-push
+      - build-infra:
+          requires:
+              - build-image-and-push
