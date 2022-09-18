@@ -9,10 +9,10 @@ jobs:
         - image: 'cimg/base:stable'
       steps:
         - checkout
-        - run: curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | apt-key add -
-        - run: echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
-        - run: apt-get update
-        - run: apt-get install -y migrate
+        - run: sudo curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | apt-key add -
+        - run: sudo echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
+        - run: sudo apt-get update
+        - run: sudo apt-get install -y migrate
         - run: cd migrations/ && ./migrate.sh up
   build-app:
       docker:
@@ -68,10 +68,10 @@ workflows:
   main-branch-commit:
     jobs:
       - migrate-db
-      - build-app
-      - build-image-and-push: 
-          requires:
-              - build-app
-      - build-infra:
-          requires:
-              - build-image-and-push
+      # - build-app
+      # - build-image-and-push: 
+      #     requires:
+      #         - build-app
+      # - build-infra:
+      #     requires:
+      #         - build-image-and-push
