@@ -7,10 +7,10 @@ COPY ./yarn.lock ./
 
 RUN yarn install --prod --frozen-lockfile
 
-COPY dist/src ./src
-COPY dist/static ./static
-COPY dist/templates ./templates
-COPY dist/config ./config
+COPY dist/src ./
+COPY dist/static ./
+COPY dist/templates ./
+COPY dist/config ./
 
 ENV PORT=3000
 ENV NODE_ENV=production
