@@ -61,9 +61,9 @@ workflows:
   main-branch-commit:
     jobs:
       - build-app
-      # - build-image-and-push: 
-      #     requires:
-      #         - build-app
-      # - build-infra:
-      #     requires:
-      #         - build-image-and-push
+      - build-image-and-push: 
+          requires:
+              - build-app
+      - build-infra:
+          requires:
+              - build-image-and-push
