@@ -15,4 +15,4 @@ ENV HOST=0.0.0.0
 
 EXPOSE ${PORT}
 
-ENTRYPOINT ["node" ,"src/index.js"]
+ENTRYPOINT ["yarn" ,"start"]
