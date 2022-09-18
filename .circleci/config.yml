@@ -4,16 +4,6 @@ orbs:
   node: circleci/node@5.0.2
   pulumi: pulumi/pulumi@2.1.0
 jobs:
-  migrate-db:
-      docker:
-        - image: 'cimg/base:stable'
-      steps:
-        - checkout
-        - run: curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | sudo apt-key add -
-        - run: sudo echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
-        - run: sudo apt-get update
-        - run: sudo apt-get install -y migrate
-        - run: cd migrations/ && ./migrate.sh up
   build-app:
       docker:
         - image: 'cimg/base:stable'
@@ -67,11 +57,10 @@ jobs:
 workflows:
   main-branch-commit:
     jobs:
-      - migrate-db
-      # - build-app
-      # - build-image-and-push: 
-      #     requires:
-      #         - build-app
-      # - build-infra:
-      #     requires:
-      #         - build-image-and-push
+      - build-app
+      - build-image-and-push: 
+          requires:
+              - build-app
+      - build-infra:
+          requires:
+              - build-image-and-push
