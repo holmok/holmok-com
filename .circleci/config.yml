@@ -64,6 +64,6 @@ workflows:
       - build-image-and-push: 
           requires:
               - build-app
-      - build-infra:
-          requires:
-              - build-image-and-push
+      # - build-infra:
+      #     requires:
+      #         - build-image-and-push
