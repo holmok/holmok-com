@@ -8,4 +8,4 @@ config:
   holmok-com:pg_host:
     secure: AAABAEoWnFhwgsgex09zJQv0LP1Tz3ihz1w06Ktj9EV2L6L0kwk9IO0crQ==
   holmok-com:pg_password:
-    secure: AAABAF9fnA+Vp+lXgfAEYw54w6+M57XFqV6wmyzh2P24/cF6AQIsuk3XBrcYt05lew==
+    secure: AAABAKcW4NBhALNhqgQjIuN8v+eGgElWK7j5/knmbDXzuuV/0tJlBkYfe0O/HCKylA==
