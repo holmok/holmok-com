@@ -15,9 +15,8 @@ jobs:
         - run: cd pulumi && npm install
         - run: cd web && yarn
         - run: cd web && yarn build
-        - run: ls -alh web/dist/src
+        - run: ls -alh web/dist
         - run: ls -alh web
-        - run: ls -alh web/config
         - run: cat web/tsconfig.json
         - persist_to_workspace:
             root: /home/circleci/project
