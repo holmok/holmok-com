@@ -16,6 +16,8 @@ jobs:
         - run: cd web && yarn install --frozen-lockfile
         - run: cd web && yarn build
         - run: ls -alh web/dist/src
+        - run: ls -alh web
+        - run: ls -alh web/config
         - persist_to_workspace:
             root: /home/circleci/project
             paths:
@@ -59,9 +61,9 @@ workflows:
   main-branch-commit:
     jobs:
       - build-app
-      - build-image-and-push: 
-          requires:
-              - build-app
-      - build-infra:
-          requires:
-              - build-image-and-push
+      # - build-image-and-push: 
+      #     requires:
+      #         - build-app
+      # - build-infra:
+      #     requires:
+      #         - build-image-and-push
