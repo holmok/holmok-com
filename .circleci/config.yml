@@ -11,10 +11,11 @@ jobs:
         - checkout
         - node/install:
             install-yarn: true
-            node-version: '16.13'
+            node-version: '16.14'
         - run: cd pulumi && npm install
         - run: cd web && yarn install --frozen-lockfile
         - run: cd web && yarn build
+        - run: ls -alh web/src
         - persist_to_workspace:
             root: /home/circleci/project
             paths:
