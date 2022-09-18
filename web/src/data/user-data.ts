@@ -1,6 +1,6 @@
 import Pino from 'pino'
 import { Knex } from 'knex'
-import { z } from 'zod'
+import { unknown, z } from 'zod'
 
 const UserRowSchema = z.object({
   id: z.number(),
@@ -95,8 +95,8 @@ export default class UserData {
         .where({ email, deleted: false })
         .first()
       return output
-    } catch (error) {
-      this.logger.error(error, `Failed to get user by email (email=${email})`)
+    } catch (error: any) {
+      this.logger.error(`Failed to get user by email (email=${email})\n${error?.stack}`)
       throw new UserDataError('Failed to get user by email', error as PGError)
     }
   }

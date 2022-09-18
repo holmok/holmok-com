@@ -14,6 +14,7 @@ export interface Data {
 export default function data (config: Config.IConfig, logger: Pino.Logger): Data {
   logger.info('data initialize called')
   const knexConfig = config.get<k.Config>('knex')
+  logger.debug(JSON.stringify(knexConfig, null, 2))
   const knex = Knex(knexConfig)
   const users = new UserData(knex, logger)
   const photoCategories = new PhotoCategoryData(knex, logger)

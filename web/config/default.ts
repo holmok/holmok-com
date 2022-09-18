@@ -77,7 +77,7 @@ export const knex: Knex.Config = {
     afterCreate: function (conn: PG.PoolClient, done: (err: Error | undefined, conn: PG.PoolClient) => void) {
       const schema = process.env.PG_SCHEMA ?? 'thesignuplist'
       conn.query(
-        `SET search_path TO ${schema}, public;`,
+        `SET search_path TO "${schema}", public;`,
         (err: Error | undefined) => {
           done(err, conn)
         })

@@ -5,7 +5,7 @@ import Config from 'config'
 import Uniquey from 'uniquey'
 import Crypto from 'crypto'
 
-function hash (password: string, saltRounds: number): string {
+function hash(password: string, saltRounds: number): string {
   let value = password
   for (let i = 0; i < saltRounds; i++) {
     value = Crypto.createHash('sha256').update(password).digest('hex')
@@ -13,7 +13,7 @@ function hash (password: string, saltRounds: number): string {
   return value
 }
 
-function compare (password: string, hash: string, saltRounds: number): boolean {
+function compare(password: string, hash: string, saltRounds: number): boolean {
   let value = password
   for (let i = 0; i < saltRounds; i++) {
     value = Crypto.createHash('sha256').update(password).digest('hex')
@@ -63,14 +63,14 @@ const uniquey = new Uniquey({
 })
 
 export class UserServiceError extends Error {
-  constructor (message: string, public readonly innerError?: Error) {
+  constructor(message: string, public readonly innerError?: Error) {
     super(message)
     this.name = 'UserServiceError'
   }
 }
 
 export default class UserService {
-  constructor (
+  constructor(
     private readonly data: UserData,
     private readonly logger: Pino.Logger,
     private readonly config: Config.IConfig
@@ -78,7 +78,7 @@ export default class UserService {
     this.logger.debug('UserService constructor called')
   }
 
-  private mapUser (data: UserRow): User {
+  private mapUser(data: UserRow): User {
     return {
       id: data.id,
       username: data.username,
@@ -90,7 +90,7 @@ export default class UserService {
     }
   }
 
-  async getAll (): Promise<User[]> {
+  async getAll(): Promise<User[]> {
     this.logger.debug('UserService getAll called')
     try {
       const output = await this.data.getAll()
@@ -100,7 +100,7 @@ export default class UserService {
     }
   }
 
-  async getById (id: number): Promise<User> {
+  async getById(id: number): Promise<User> {
     this.logger.debug('UserService getById called')
     z.number().positive().parse(id)
     try {
@@ -112,7 +112,7 @@ export default class UserService {
     }
   }
 
-  async getByStub (stub: string): Promise<User> {
+  async getByStub(stub: string): Promise<User> {
     this.logger.debug('UserService getByStub called')
     z.string().min(1).parse(stub)
     try {
@@ -124,7 +124,7 @@ export default class UserService {
     }
   }
 
-  async getByEmail (email: string): Promise<User> {
+  async getByEmail(email: string): Promise<User> {
     this.logger.debug('UserService getByEmail called')
     z.string().min(1).parse(email)
     try {
@@ -136,7 +136,7 @@ export default class UserService {
     }
   }
 
-  async getByUsername (username: string): Promise<User> {
+  async getByUsername(username: string): Promise<User> {
     this.logger.debug('UserService getByUsername called')
     z.string().min(1).parse(username)
     try {
@@ -148,22 +148,23 @@ export default class UserService {
     }
   }
 
-  async getByLogIn (login: UserLogin): Promise<User> {
+  async getByLogIn(login: UserLogin): Promise<User> {
     this.logger.debug('UserService getByLogIn called')
     const { email, password } = userLoginSchema.parse(login)
+    let user: UserRow | undefined = undefined
     try {
-      const output = await this.data.getByEmail(email)
-      if (output == null) throw new UserServiceError('Invalid email or password')
-      const saltRounds = this.config.get<number>('saltRounds')
-      const valid = compare(password, output.passwordHash, saltRounds)
-      if (!valid) throw new UserServiceError('Invalid email or password')
-      return this.mapUser(output)
+      user = await this.data.getByEmail(email)
     } catch (error) {
       throw new UserServiceError('Failed to get user', error as Error)
     }
+    if (user == null) throw new UserServiceError('Invalid email or password')
+    const saltRounds = this.config.get<number>('saltRounds')
+    const valid = compare(password, user.passwordHash, saltRounds)
+    if (!valid) throw new UserServiceError('Invalid email or password')
+    return this.mapUser(user)
   }
 
-  async create (user: UserCreate): Promise<User> {
+  async create(user: UserCreate): Promise<User> {
     this.logger.debug('UserService create called')
     const { email, password, username } = userCreateSchema.parse(user)
     const stub = uniquey.create()
@@ -180,7 +181,7 @@ export default class UserService {
     }
   }
 
-  async update (toUpdate: UserUpdate): Promise<User> {
+  async update(toUpdate: UserUpdate): Promise<User> {
     this.logger.debug('UserService update called')
     const user = userUpdateSchema.parse(toUpdate)
     try {
