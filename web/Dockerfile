@@ -7,7 +7,7 @@ COPY ./yarn.lock ./
 
 RUN yarn install --prod --frozen-lockfile
 
-COPY dist/src ./
+COPY dist/src ./src
 COPY dist/static ./
 COPY dist/templates ./
 COPY dist/config ./
