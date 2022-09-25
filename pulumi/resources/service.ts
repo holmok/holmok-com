@@ -18,11 +18,11 @@ export function CreateService(config: Config): Service {
         containers: [{
           image: 'us.gcr.io/holmok-com/holmok-com:latest',
           envs: [
-            { name: 'PG_USER', value: 'holmok-com' },
+            { name: 'PG_USER', value: config.requireSecret('pg_user') },
             { name: 'PG_PASSWORD', value: config.requireSecret('pg_password') },
             { name: 'PG_HOST', value: config.requireSecret('pg_host') },
-            { name: 'PG_DATABASE', value: 'holmok-com' },
-            { name: 'PG_SCHEMA', value: 'holmok-com' },
+            { name: 'PG_DATABASE', value:  config.requireSecret('pg_database') },
+            { name: 'PG_SCHEMA', value: config.requireSecret('pg_schema') },
             { name: 'PG_PORT', value: '5432' },
           ],
           ports: [{
