@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   gcp-cli: circleci/gcp-cli@2
-  gcp-storage: freighthub/gcp-storage@0.2
+  gcp-storage: freighthub/gcp-storage@0.1
   gcp-gcr: circleci/gcp-gcr@0.15.0
   node: circleci/node@5.0.2
   pulumi: pulumi/pulumi@2.1.0
