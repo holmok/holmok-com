@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
   gcp-cli: circleci/gcp-cli@2.4.1
-  gcp-storage: freighthub/gcp-storage@0.2.0
   gcp-gcr: circleci/gcp-gcr@0.15.0
   node: circleci/node@5.0.2
   pulumi: pulumi/pulumi@2.1.0
@@ -28,10 +27,8 @@ jobs:
       - attach_workspace:
           at: /home/circleci/project
       - gcp-cli/install
-      - gcp-storage/upload:
-          source_path: /home/circleci/project/web/static/*
-          destination_bucket: static.holmok.com
-          transfer_files_compressed: 'js,css,html'
+      - gcp-cli/initialize
+      - run: gsutil rsync /home/circleci/project/web/static gs://static.holmok.com 
   build-image-and-push:
     executor: gcp-gcr/default
     steps:
