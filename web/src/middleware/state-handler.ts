@@ -13,6 +13,7 @@ export default function StateHandler (
     ctx.state.services = services
     ctx.state.config = config
     ctx.state.logger = logger
+    ctx.state.staticPrefix = config.get('staticPrefix')
     ctx.state.dev = config.get<boolean>('dev')
     ctx.state.name = config.get<string>('name')
     await next()
