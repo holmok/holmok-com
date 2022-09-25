@@ -5,8 +5,9 @@ import { CreateGlobalForwardingRule } from './resources/global-forwarding-rule'
 import { CreateTargetHttpProxy } from './resources/http-target-proxy'
 import { CreateURLMap } from './resources/url-map'
 import { CreateStaticAddress } from './resources/address'
+import { CreateServiceAccount } from './resources/service-account'
 import { CreateNewARecord, CreateNewCNAMERecord, CreateNewDNSZone } from './resources/dns-record'
-import { CreateBucket } from './resources/buckets'
+import { AddBucketAccess, CreateBucket } from './resources/buckets'
 import { CreatePostgresInstance, CreatePostgresUser } from './resources/postgres'
 import { Config } from '@pulumi/pulumi'
 
@@ -15,7 +16,8 @@ const config = new Config()
 const pgInstance = CreatePostgresInstance()
 const pgUser = CreatePostgresUser(pgInstance)
 
-const service = CreateService(config)
+const sa = CreateServiceAccount('holmok-com-cloudrun')
+const service = CreateService(config, sa)
 const neg = CreateNetworkEndpointGroup(service)
 const backendService = CreateBackendService(neg)
 const urlMap = CreateURLMap(backendService)
@@ -28,6 +30,7 @@ const siteCname = CreateNewCNAMERecord('holmok.com', zone, 'www')
 
 const staticCname = CreateNewCNAMERecord('c.storage.googleapis.com', zone, 'static')
 const { bucket, member } = CreateBucket('static.holmok.com')
+const access = AddBucketAccess('cloud-run-access', bucket, sa, 'roles/storage.objectAdmin')
 
 export const output = {
   pgInstance: { urn: pgInstance.urn },
@@ -43,5 +46,7 @@ export const output = {
   forwardingRule: { urn: forwardingRule.urn },
   bucket: { urn: bucket.urn, name: bucket.name },
   member: { urn: member.urn },
-  staticCname: { id: staticCname.id, name: staticCname.name }
+  staticCname: { id: staticCname.id, name: staticCname.name },
+  sa: { urn: sa.urn, email: sa.email },
+  access: { urn: access.urn }
 }

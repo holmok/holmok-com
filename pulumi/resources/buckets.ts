@@ -1,4 +1,13 @@
+import { Account } from '@pulumi/gcp/serviceaccount'
 import { Bucket, BucketIAMMember } from '@pulumi/gcp/storage'
+
+export function AddBucketAccess (name: string, bucket: Bucket, sa: Account, role: string): BucketIAMMember {
+  return new BucketIAMMember(`${name}-bucket-access`, {
+    bucket: bucket.name,
+    member: sa.email,
+    role
+  })
+}
 
 export function CreateBucket (name: string): { bucket: Bucket, member: BucketIAMMember } {
   const bucket = new Bucket(`${name}-bucket`, {
