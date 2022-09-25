@@ -187,6 +187,22 @@ input[type="button"].button-primary:focus {
   text-align: center;
 }
 
+.middle {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.outer{
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
 span.closer {
   font-weight: 900;
   position: absolute;

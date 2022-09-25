@@ -9,11 +9,11 @@ export function CreateBucket (name: string): Bucket {
     cors: [{
       maxAgeSeconds: 3600,
       methods: ['GET', 'HEAD'],
-      origins: ['www.holmok.com', 'holmok.com']
+      origins: ['www.holmok.com', 'holmok.com', 'static.holmok.com']
     }],
     website: {
-      mainPageSuffix: 'index.html',
-      notFoundPage: '404.html'
+      mainPageSuffix: 'index-static.html',
+      notFoundPage: '404-static.html'
     }
   })
 }

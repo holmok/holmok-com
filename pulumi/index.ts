@@ -26,8 +26,8 @@ const zone = CreateNewDNSZone()
 const aRecord = CreateNewARecord(address, zone, 'holmok.com')
 const siteCname = CreateNewCNAMERecord('holmok.com', zone, 'www')
 
-const staticBucket = CreateBucket('static.holmok.com')
 const staticCname = CreateNewCNAMERecord('c.storage.googleapis.com', zone, 'static')
+const staticBucket = CreateBucket('static.holmok.com')
 
 export const output = {
   pgInstance: { urn: pgInstance.urn },
