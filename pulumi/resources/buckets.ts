@@ -1,10 +1,11 @@
 import { Account } from '@pulumi/gcp/serviceaccount'
 import { Bucket, BucketIAMMember } from '@pulumi/gcp/storage'
+import { interpolate } from '@pulumi/pulumi'
 
 export function AddBucketAccess (name: string, bucket: Bucket, sa: Account, role: string): BucketIAMMember {
   return new BucketIAMMember(`${name}-bucket-access`, {
     bucket: bucket.name,
-    member: sa.email,
+    member: interpolate`serviceAccount:${sa.email}`,
     role
   })
 }
