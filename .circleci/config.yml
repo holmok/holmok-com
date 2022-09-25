@@ -22,7 +22,7 @@ jobs:
               - web
               - pulumi
   push-static-folder:
-    executor: gcp-storage/google
+    executor: gcp-cli/default
     steps:
       - attach_workspace:
           at: /home/circleci/project
