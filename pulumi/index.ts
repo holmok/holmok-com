@@ -27,7 +27,7 @@ const aRecord = CreateNewARecord(address, zone, 'holmok.com')
 const siteCname = CreateNewCNAMERecord('holmok.com', zone, 'www')
 
 const staticCname = CreateNewCNAMERecord('c.storage.googleapis.com', zone, 'static')
-const staticBucket = CreateBucket('static.holmok.com')
+const { bucket, member } = CreateBucket('static.holmok.com')
 
 export const output = {
   pgInstance: { urn: pgInstance.urn },
@@ -41,6 +41,7 @@ export const output = {
   service: { urn: service.urn },
   backendService: { urn: backendService.urn },
   forwardingRule: { urn: forwardingRule.urn },
-  staticBucket: { urn: staticBucket.urn, name: staticBucket.name },
+  bucket: { urn: bucket.urn, name: bucket.name },
+  member: { urn: member.urn },
   staticCname: { id: staticCname.id, name: staticCname.name }
 }

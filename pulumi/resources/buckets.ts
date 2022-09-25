@@ -1,10 +1,10 @@
-import { Bucket } from '@pulumi/gcp/storage'
+import { Bucket, BucketIAMMember } from '@pulumi/gcp/storage'
 
-export function CreateBucket (name: string): Bucket {
-  return new Bucket(`${name}-bucket`, {
+export function CreateBucket (name: string): { bucket: Bucket, member: BucketIAMMember } {
+  const bucket = new Bucket(`${name}-bucket`, {
     name: name,
-    location: 'US',
-    forceDestroy: true,
+    location: 'US-CENTRAL1',
+    publicAccessPrevention: 'inherited',
     uniformBucketLevelAccess: true,
     cors: [{
       maxAgeSeconds: 3600,
@@ -16,4 +16,12 @@ export function CreateBucket (name: string): Bucket {
       notFoundPage: '404-static.html'
     }
   })
+
+  const member = new BucketIAMMember(`${name}-bucket-all-users`, {
+    bucket: bucket.name,
+    role: 'roles/storage.objectViewer',
+    member: 'allUsers'
+  })
+
+  return { bucket, member }
 }

@@ -1,5 +1,7 @@
 version: 2.1
 orbs:
+  gcp-cli: circleci/gcp-cli@2
+  gcp-storage: freighthub/gcp-storage@0.2
   gcp-gcr: circleci/gcp-gcr@0.15.0
   node: circleci/node@5.0.2
   pulumi: pulumi/pulumi@2.1.0
@@ -20,6 +22,16 @@ jobs:
             paths:
               - web
               - pulumi
+  push-static-folder:
+    executor: gcp-storage/google
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project
+      - gcp-cli/initialize
+      - gcp-storage/upload:
+          source_path: /home/circleci/project/web/static/*
+          destination_bucket: static.holmok.com
+          transfer_files_compressed: 'js,css,html'
   build-image-and-push:
     executor: gcp-gcr/default
     steps:
@@ -58,9 +70,13 @@ workflows:
   main-branch-commit:
     jobs:
       - build-app
+      - push-static-folder:
+          requires:
+              - build-app
       - build-image-and-push: 
           requires:
               - build-app
       - build-infra:
           requires:
               - build-image-and-push
+              - push-static-folder
