@@ -11,6 +11,6 @@ export default class SystemData {
 
   async ready (): Promise<void> {
     const output = await this.db.raw('SELECT 1')
-    if(output == null) throw new Error('Database is not ready')
+    if (output == null) throw new Error('Database is not ready')
   }
 }

@@ -2,7 +2,7 @@ import KoaRouter from '@koa/router'
 import { ServerContext, ServerContextState } from '../middleware'
 import Validator from 'validator'
 
-export default function PublicRoutes(): KoaRouter<ServerContextState, ServerContext> {
+export default function PublicRoutes (): KoaRouter<ServerContextState, ServerContext> {
   const router = new KoaRouter<ServerContextState, ServerContext>()
 
   router.get('/', async (ctx) => {
