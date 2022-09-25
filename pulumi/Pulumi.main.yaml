@@ -6,12 +6,12 @@ config:
   gcp:project: holmok-com
   gcp:region: us-central1
   holmok-com:pg_database:
-    secure: AAABAPmjIE4//NMRDEfeDmExZR206TxksaHD0UwN77VKmS7V5PDIX9ib
+    secure: AAABAJd09XYFKDJV+F+Q0tXBFcEiRbGSejRL5UYvDEb/kD0E00s=
   holmok-com:pg_host:
     secure: AAABAEoWnFhwgsgex09zJQv0LP1Tz3ihz1w06Ktj9EV2L6L0kwk9IO0crQ==
   holmok-com:pg_password:
     secure: AAABAAcS0nDYaT/ZRt3qELVV1LR+HmnS8tFDu6UfC4VyepJ8vhKpk8nlH2Y=
   holmok-com:pg_schema:
-    secure: AAABAICmWXPLVPirYxFERkrMcU8Oh/ody9I3bETfJGqx3Xytytx8n6o9
+    secure: AAABALkhZmurykcHnecVOlz6qm6iJo5vg8YYrjb+y+BVjCG5H0I=
   holmok-com:pg_user:
     secure: AAABAL94stAonehoKBaizHJK2OBnU9f+AXXSjIyRHGzUEvrlsYI=
