@@ -2,12 +2,22 @@ import KoaRouter from '@koa/router'
 import { ServerContext, ServerContextState } from '../middleware'
 import Validator from 'validator'
 
-export default function PublicRoutes (): KoaRouter<ServerContextState, ServerContext> {
+export default function PublicRoutes(): KoaRouter<ServerContextState, ServerContext> {
   const router = new KoaRouter<ServerContextState, ServerContext>()
 
   router.get('/', async (ctx) => {
     const status = ctx.state.getValue('status') ?? []
     ctx.render('index', { title: 'home', status })
+  })
+
+  router.get('/ready', async (ctx) => {
+    const system = ctx.state.services.systemService()
+    await system.ready()
+    ctx.body = { ready: true, timestamp: new Date().toISOString() }
+  })
+
+  router.get('/ok', async (ctx) => {
+    ctx.body = { status: 'ok', timestamp: new Date().toISOString() }
   })
 
   router.get('/about', async (ctx) => {

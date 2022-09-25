@@ -66,16 +66,16 @@ export const knex: Knex.Config = {
   client: 'postgres',
   connection: {
     host: process.env.PG_HOST ?? 'localhost',
-    database: process.env.PG_DATABASE ?? 'thesignuplist',
-    password: process.env.PG_PASSWORD ?? 'thesignuplist',
-    user: process.env.PG_USER ?? 'thesignuplist',
+    database: process.env.PG_DATABASE ?? 'holmok-com',
+    password: process.env.PG_PASSWORD ?? 'holmok-com',
+    user: process.env.PG_USER ?? 'holmok-com',
     port: parseInt(process.env.PG_PORT ?? '5432', 10)
   },
   pool: {
     min: 0,
     max: 7,
     afterCreate: function (conn: PG.PoolClient, done: (err: Error | undefined, conn: PG.PoolClient) => void) {
-      const schema = process.env.PG_SCHEMA ?? 'thesignuplist'
+      const schema = process.env.PG_SCHEMA ?? 'holmok-com'
       conn.query(
         `SET search_path TO "${schema}", public;`,
         (err: Error | undefined) => {
