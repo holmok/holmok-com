@@ -13,6 +13,7 @@ export default function StateGetterSetterHandler (): (ctx: ServerContext, next: 
       const output = JSON.parse(Buffer.from(value, 'base64url').toString('utf-8'))
       store[key] = undefined
       ctx.state.store = store
+      ctx.state.staticPrefix = ctx.config.get('staticPrefix') as string
       ctx.cookies.set(key, null, { signed: true })
       return output
     }

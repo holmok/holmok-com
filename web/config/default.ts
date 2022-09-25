@@ -5,6 +5,8 @@ import { knexSnakeCaseMappers } from 'objection'
 import { Knex } from 'knex'
 import PG from 'pg'
 
+export const staticPrefix = '/'
+
 export interface StaticOptions {
   root: string
   options: KoaStatic.Options

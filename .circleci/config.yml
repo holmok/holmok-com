@@ -28,7 +28,7 @@ jobs:
           at: /home/circleci/project
       - gcp-cli/install
       - gcp-cli/initialize
-      - run: gsutil rsync /home/circleci/project/web/static gs://static.holmok.com 
+      - run: gsutil rsync -r /home/circleci/project/web/static gs://static.holmok.com 
   build-image-and-push:
     executor: gcp-gcr/default
     steps:
