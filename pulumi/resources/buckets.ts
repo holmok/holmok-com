@@ -9,7 +9,7 @@ export function CreateBucket (name: string): { bucket: Bucket, member: BucketIAM
     cors: [{
       maxAgeSeconds: 3600,
       methods: ['GET', 'HEAD'],
-      origins: ['www.holmok.com', 'holmok.com', 'static.holmok.com']
+      origins: ['https://www.holmok.com', 'https://holmok.com', 'https://static.holmok.com']
     }],
     website: {
       mainPageSuffix: 'index-static.html',
