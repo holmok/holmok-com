@@ -35,7 +35,7 @@ export default class ImageService {
 
   private async resizeAndSavePhoto (originalFilename: string, path: string, width: number): Promise<void> {
     const target = Path.basename(originalFilename, Path.extname(originalFilename))
-    const targetPath = `images/${width}/${target as string}-${width}.jpg`
+    const targetPath = `images/${width}/${target}-${width}.jpg`
     const buffer = await Sharp(path)
       .resize({ width })
       .jpeg({ quality: 100, progressive: true, optimizeScans: true })
@@ -45,7 +45,7 @@ export default class ImageService {
 
   private async doNotResizeAndSavePhoto (originalFilename: string, path: string): Promise<void> {
     const target = Path.basename(originalFilename, Path.extname(originalFilename))
-    const targetPath = `images/original/${target as string}.jpg`
+    const targetPath = `images/original/${target}.jpg`
     const buffer = await Sharp(path)
       .jpeg({ quality: 100, progressive: true, optimizeScans: true })
       .toBuffer()
