@@ -5,7 +5,6 @@ import { ServiceProviders } from '../services'
 import { User } from '../services/user-service'
 import KoaLogger from 'koa-pino-logger'
 import BodyParser from 'koa-bodyparser'
-import KoaBody from 'koa-body'
 import StateGetterSetterHandler from './state-getter-setter-handler'
 import AuthHandler, { AnonymousUser, AuthenticatedUser } from './auth-handler'
 import ErrorHandler from './error-handler'
@@ -58,7 +57,6 @@ export default function registerMiddleware (
 
   logger.debug('Registering Body Parser')
   app.use(BodyParser())
-  app.use(KoaBody({ multipart: true }))
 
   logger.debug('Registering State Handler')
   app.use(StateHandler(config, logger, services))

@@ -1,4 +1,5 @@
 import KoaRouter from '@koa/router'
+import KoaBody from 'koa-body'
 import { ServerContext, ServerContextState } from '../middleware'
 import { Authorize } from '../middleware/auth-handler'
 
@@ -12,7 +13,7 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
     ctx.render('photo-upload', { title: 'photo-upload' })
   })
 
-  router.post('/photo-upload', async (ctx) => {
+  router.post('/photo-upload', KoaBody({ multipart: true }), async (ctx) => {
     const { files } = ctx.request
     if (!Array.isArray(files?.file) && files?.file != null) {
       const { originalFilename, filepath } = files.file
