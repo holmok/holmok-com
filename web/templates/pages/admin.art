@@ -4,5 +4,7 @@
 <h1>Admin Home</h1>
 <ul>
 <li><a href="/admin/photo-categories/">Photo Categories</a> | <a href="/admin/photo-categories/create">Create New Photo Category</a> </li>
+<li><a href="/admin/photo-upload/">Upload Photos</a>  </li>
+
 </ul>
 {{/block}}

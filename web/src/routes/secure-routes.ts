@@ -8,6 +8,20 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
   router.use(Authorize())
   router.prefix('/admin')
 
+  router.get('/photo-upload', async (ctx) => {
+    ctx.render('photo-upload', { title: 'photo-upload' })
+  })
+
+  router.post('/photo-upload', async (ctx) => {
+    const { files } = ctx.request
+    if (!Array.isArray(files?.file) && files?.file != null) {
+      const { originalFilename, filepath } = files.file
+      const { imageService } = ctx.state.services
+      await imageService().processAndSavePhoto(originalFilename as string, filepath)
+    }
+    ctx.body = { success: true }
+  })
+
   router.get('/', async (ctx) => {
     const status = ctx.state.getValue('status') ?? []
     ctx.render('admin', { title: 'admin', status })

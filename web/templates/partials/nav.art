@@ -6,7 +6,6 @@
 <li><a href="/about">about</a></li>
 {{ if authenticated }}
 <li><a href="/admin">admin</a></li>
-<li><a href="/admin/photo-categories">photo categories</a></li>
 <li><a href="/logout">logout</a></li>
 {{ /if }}
 </ul>
