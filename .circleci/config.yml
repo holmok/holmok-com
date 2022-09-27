@@ -32,7 +32,7 @@ jobs:
       - gcp-cli/initialize
       - run: gsutil rsync -r /home/circleci/project/web/static gs://static.holmok.com 
   build-image-and-push:
-    resource_class: small
+    resource_class: medium
     executor: gcp-gcr/default
     steps:
       - attach_workspace:
