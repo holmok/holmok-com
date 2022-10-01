@@ -34,7 +34,7 @@ export function CreateService (config: Config, sa: Account): Service {
           resources: {
             limits: {
               cpu: '1000m',
-              memory: '512Mi'
+              memory: '1024Mi'
             }
           }
         }],
