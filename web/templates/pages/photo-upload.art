@@ -5,7 +5,7 @@
 <div class="actions">
     <button class="button-primary u-full-width" id="upload-btn">upload</button>
 </div>
-<progress id="progress-bar" style="display:none" class="u-full-width" max=100 value=0></progress>
+<progress id="progress-bar"  class="u-full-width hidden" max=100 value=0></progress>
 <div class="preview-area" id="preview-area">
 </div>
 {{/block}}

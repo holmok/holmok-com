@@ -1,119 +1,108 @@
-Zepto(function ($) {
-  $(document).on('click', 'a.toggle', function (e) {
-    e.preventDefault()
-    $('ul.menu').toggle()
-    return false
+/* global u, FileReader, FormData, alert */
+
+document.addEventListener('DOMContentLoaded', runApp, false)
+
+function runApp () {
+  // toggle menu
+  u('a.toggle').handle('click', function (e) {
+    const hidden = u('ul.menu').hasClass('hidden')
+    console.log(`click: ${hidden}`)
+    if (hidden) {
+      u('ul.menu').removeClass('hidden')
+    } else {
+      u('ul.menu').addClass('hidden')
+    }
   })
 
-  $(document).on('click', 'span.closer', function (e) {
-    e.preventDefault()
-    $(this).parent().parent().remove()
-    return false
-  })
-
-  const dropArea = document.getElementById('upload-area')
-  if (dropArea) {
-    (function dragDrop () {
-      ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false)
-      })
-
-      function preventDefaults (e) {
-        e.preventDefault()
-        e.stopPropagation()
-      }
-
-      ;['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false)
-      })
-
-      ;['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false)
-      })
-
-      function highlight (e) {
-        dropArea.classList.add('highlight')
-      }
-
-      function unhighlight (e) {
-        dropArea.classList.remove('highlight')
-      }
-
-      dropArea.addEventListener('drop', handleDrop, false)
-
-      function handleDrop (e) {
-        const dt = e.dataTransfer
-        const files = dt.files
-
-        handleFiles(files)
-      }
-
-      function handleFiles (files) {
-        ([...files]).forEach(previewFile)
-      }
-
-      let _files = []
-
-      function previewFile (file) {
-        if (file.type.startsWith('image/') && file.size < 100 * 1024 * 1024) {
-          const ext = file.name.split('.').pop().toLowerCase()
-          if (ext === 'jpg' || ext === 'jpeg' || ext === 'png' || ext === 'tif' || ext === 'tiff') {
-            const reader = new FileReader()
-            reader.readAsDataURL(file)
-            _files.push(file)
-            reader.onloadend = function () {
-              const img = document.createElement('img')
-              img.src = reader.result
-              img.classList.add('preview')
-              document.getElementById('preview-area').appendChild(img)
-            }
-          }
-        }
-      }
-
-      let filesDone = 0
-      let filesToDo = 0
-      const progressBar = document.getElementById('progress-bar')
-
-      function initializeProgress (numFiles) {
-        $('#progress-bar').show()
-        progressBar.value = 0
-        filesDone = 0
-        filesToDo = numFiles
-      }
-
-      function progressDone () {
-        filesDone++
-        progressBar.value = filesDone / filesToDo * 100
-        if (filesDone === filesToDo) {
-          $('#progress-bar').hide()
-          $('#upload-btn').show()
-          $('#preview-area').children().remove()
-          _files = []
-        }
-      }
-
-      $(document).on('click', '#upload-btn', function (e) {
-        initializeProgress(_files.length)
-        $('#upload-btn').hide()
-        e.preventDefault()
-        ;[..._files].forEach(uploadFile)
-        return false
-      })
-
-      function uploadFile (file) {
-        const url = '/admin/photo-upload'
-        const formData = new FormData()
-
-        formData.append('file', file)
-
-        fetch(url, {
-          method: 'POST',
-          body: formData
-        })
-          .then(() => { progressDone() })
-          .catch(() => { /* Error. Inform the user */ })
-      }
-    })()
+  // close flash message
+  const closer = u('span.closer')
+  const hasCloser = closer.length > 0
+  if (hasCloser) {
+    closer.handle('click', function (e) {
+      u(this).parent().parent().remove()
+    })
   }
-})
+
+  // drag and drop
+  const dropArea = u('#upload-area')
+  const hasDropArea = dropArea.length > 0
+  if (hasDropArea) {
+    let _files = []
+    dropArea.handle('dragenter,dragover', function (e) {
+      dropArea.addClass('highlight')
+    })
+
+    dropArea.handle('dragleave,drop', function (e) {
+      dropArea.removeClass('highlight')
+    })
+
+    dropArea.on('drop', function (e) {
+      e.preventDefault()
+      e.stopPropagation()
+      const files = e.dataTransfer.files;
+      ([...files]).forEach(previewFile)
+    })
+
+    function previewFile (file) {
+      if (file.type.startsWith('image/') && file.size < 100 * 1024 * 1024) {
+        const ext = file.name.split('.').pop().toLowerCase()
+        if (ext === 'jpg' || ext === 'jpeg' || ext === 'png' || ext === 'tif' || ext === 'tiff') {
+          const reader = new FileReader()
+          reader.readAsDataURL(file)
+          _files.push(file)
+          reader.onloadend = function () {
+            const img = document.createElement('img')
+            img.src = reader.result
+            img.classList.add('preview')
+            document.getElementById('preview-area').appendChild(img)
+          }
+          return
+        }
+      }
+      alert(`File ${file.name} is not a valid image or is too large.`)
+    }
+
+    let filesDone = 0
+    let filesToDo = 0
+    const progressBar = u('#progress-bar')
+
+    function initializeProgress (numFiles) {
+      progressBar.removeClass('hidden')
+      progressBar.attr('value', 0)
+      filesDone = 0
+      filesToDo = numFiles
+    }
+
+    function updateProgress () {
+      filesDone++
+      progressBar.value = filesDone / filesToDo * 100
+      if (filesDone === filesToDo) {
+        progressBar.addClass('hidden')
+        u('#upload-btn').removeClass('hidden')
+        u('#preview-area').children().remove()
+        _files = []
+      }
+    }
+
+    u('#upload-btn').handle('click', function (e) {
+      initializeProgress(_files.length)
+      u('#upload-btn').addClass('hidden');
+      ([..._files]).forEach(uploadFile)
+    })
+
+    function uploadFile (file) {
+      const url = '/admin/photo-upload'
+      const formData = new FormData()
+      formData.append('file', file)
+      fetch(url, {
+        method: 'POST',
+        body: formData
+      })
+        .then(() => { updateProgress() })
+        .catch((error) => {
+          alert(error.message)
+          console.error(error)
+        })
+    }
+  }
+}

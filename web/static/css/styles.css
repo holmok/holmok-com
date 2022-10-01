@@ -112,7 +112,6 @@ span.hamburger a:hover {
 }
 
 ul.menu {
-  display: none;
   background-color: black;
   position: relative;
   top: -5px;
@@ -302,4 +301,8 @@ a.plug {
 
 .actions {
   margin: 10px 0;
+}
+
+.hidden {
+  display: none;
 }

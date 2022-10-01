@@ -25,6 +25,6 @@
   </div>
   {{include '../partials/footer.art'}}
 </body>
-<script src="{{staticPrefix}}js/zepto.js"></script>
+<script src="{{staticPrefix}}js/umbrella.min.js"></script>
 <script src="{{staticPrefix}}js/app.js"></script>
 </html>
