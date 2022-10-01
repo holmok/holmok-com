@@ -16,7 +16,7 @@ const config = new Config()
 const pgInstance = CreatePostgresInstance()
 const pgUser = CreatePostgresUser(pgInstance)
 
-const sa = CreateServiceAccount('holmok-com-cloudrun')
+const { sa, access } = CreateServiceAccount('holmok-com-cloudrun')
 const service = CreateService(config, sa)
 const neg = CreateNetworkEndpointGroup(service)
 const backendService = CreateBackendService(neg)
@@ -30,7 +30,8 @@ const siteCname = CreateNewCNAMERecord('holmok.com', zone, 'www')
 
 const staticCname = CreateNewCNAMERecord('c.storage.googleapis.com', zone, 'static')
 const { bucket, member } = CreateBucket('static.holmok.com')
-const access = AddBucketAccess('cloud-run-access', bucket, sa, 'roles/storage.objectAdmin')
+const accessAdmin = AddBucketAccess('cloud-run-access-admin', bucket, sa, 'roles/storage.objectAdmin')
+const accessLegacy = AddBucketAccess('cloud-run-access-legacy', bucket, sa, 'roles/storage.legacyBucketOwner')
 
 export const output = {
   pgInstance: { urn: pgInstance.urn },
@@ -48,5 +49,7 @@ export const output = {
   member: { urn: member.urn },
   staticCname: { id: staticCname.id, name: staticCname.name },
   sa: { urn: sa.urn, email: sa.email },
-  access: { urn: access.urn }
+  accessLegacy: { urn: accessLegacy.urn },
+  accessAdmin: { urn: accessAdmin.urn },
+  saAccess: { urn: access.urn }
 }
