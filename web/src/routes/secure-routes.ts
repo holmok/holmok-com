@@ -16,13 +16,13 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
   router.get('/photo-unedited', async (ctx) => {
     const { photo, photoCategory } = ctx.state.services
     const image = await photo().getOldestUneditedPhoto()
-    if(image!= null){ 
-    const categories = await photoCategory().getAll()
-    const status = ctx.state.getValue('status') ?? []
-    const errors = ctx.state.getValue('errors') ?? []
-    ctx.render('photo-unedited', { categories, errors, status, image, title: 'unedited photos' })
-    }else{
-      ctx.render('photo-unedited-empty',{title: 'unedited photos'})
+    if (image != null) {
+      const categories = await photoCategory().getAll()
+      const status = ctx.state.getValue('status') ?? []
+      const errors = ctx.state.getValue('errors') ?? []
+      ctx.render('photo-unedited', { categories, errors, status, image, title: 'unedited photos' })
+    } else {
+      ctx.render('photo-unedited-empty', { title: 'unedited photos' })
     }
   })
 
