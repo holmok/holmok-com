@@ -18,6 +18,7 @@ function compare (password: string, hash: string, saltRounds: number): boolean {
   for (let i = 0; i < saltRounds; i++) {
     value = Crypto.createHash('sha256').update(password).digest('hex')
   }
+  console.log(value, hash)
   return value === hash
 }
 
@@ -69,13 +70,13 @@ export class UserServiceError extends Error {
   }
 }
 
-export default class UserService {
+export default class UserServiceProvider {
   constructor (
     private readonly data: UserData,
     private readonly logger: Pino.Logger,
     private readonly config: Config.IConfig
   ) {
-    this.logger.debug('UserService constructor called')
+    this.logger.debug('UserServiceProvider.constructor called')
   }
 
   private mapUser (data: UserRow): User {
@@ -91,7 +92,7 @@ export default class UserService {
   }
 
   async getAll (): Promise<User[]> {
-    this.logger.debug('UserService getAll called')
+    this.logger.debug('UserServiceProvider.getAll called')
     try {
       const output = await this.data.getAll()
       return output.map(this.mapUser)
@@ -101,7 +102,7 @@ export default class UserService {
   }
 
   async getById (id: number): Promise<User> {
-    this.logger.debug('UserService getById called')
+    this.logger.debug('UserServiceProvider.getById called')
     z.number().positive().parse(id)
     try {
       const output = await this.data.getById(id)
@@ -113,7 +114,7 @@ export default class UserService {
   }
 
   async getByStub (stub: string): Promise<User> {
-    this.logger.debug('UserService getByStub called')
+    this.logger.debug('UserServiceProvider.getByStub called')
     z.string().min(1).parse(stub)
     try {
       const output = await this.data.getByStub(stub)
@@ -125,7 +126,7 @@ export default class UserService {
   }
 
   async getByEmail (email: string): Promise<User> {
-    this.logger.debug('UserService getByEmail called')
+    this.logger.debug('UserServiceProvider.getByEmail called')
     z.string().min(1).parse(email)
     try {
       const output = await this.data.getByEmail(email)
@@ -137,7 +138,7 @@ export default class UserService {
   }
 
   async getByUsername (username: string): Promise<User> {
-    this.logger.debug('UserService getByUsername called')
+    this.logger.debug('UserServiceProvider.getByUsername called')
     z.string().min(1).parse(username)
     try {
       const output = await this.data.getByUsername(username)
@@ -149,7 +150,7 @@ export default class UserService {
   }
 
   async getByLogIn (login: UserLogin): Promise<User> {
-    this.logger.debug('UserService getByLogIn called')
+    this.logger.debug('UserServiceProvider.getByLogIn called')
     const { email, password } = userLoginSchema.parse(login)
     let user: UserRow | undefined
     try {
@@ -165,7 +166,7 @@ export default class UserService {
   }
 
   async create (user: UserCreate): Promise<User> {
-    this.logger.debug('UserService create called')
+    this.logger.debug('UserServiceProvider.create called')
     const { email, password, username } = userCreateSchema.parse(user)
     const stub = uniquey.create()
     try {
@@ -182,7 +183,7 @@ export default class UserService {
   }
 
   async update (toUpdate: UserUpdate): Promise<User> {
-    this.logger.debug('UserService update called')
+    this.logger.debug('UserServiceProvider.update called')
     const user = userUpdateSchema.parse(toUpdate)
     try {
       const oldUser = await this.data.getById(toUpdate.id)

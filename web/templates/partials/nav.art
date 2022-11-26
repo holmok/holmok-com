@@ -1,4 +1,4 @@
-<nav>
+<nav class="mobile">
 <span class="hamburger"><a class="toggle" href="#">☰</a></span>
 <ul class="menu hidden">
 <li><a href="/">home</a></li>
@@ -9,4 +9,13 @@
 <li><a href="/logout">logout</a></li>
 {{ /if }}
 </ul>
+</nav>
+<nav class="desktop">
+<a href="/">home</a>
+<a href="/photos">photos</a>
+<a href="/about">about</a>
+{{ if authenticated }}
+<a href="/admin">admin</a>
+<a href="/logout">logout</a>
+{{ /if }}
 </nav>

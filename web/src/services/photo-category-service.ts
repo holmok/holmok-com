@@ -33,7 +33,7 @@ const PhotoCategoryCreateSchema = z.object({
   stub: z.string().min(1),
   description: z.string().optional()
 })
-export type PhotoCategoryCreate= z.infer<typeof PhotoCategoryCreateSchema>
+export type PhotoCategoryCreate = z.infer<typeof PhotoCategoryCreateSchema>
 
 export class PhotoCategoryServiceError extends Error {
   constructor (message: string, public readonly innerError?: Error) {
@@ -42,12 +42,12 @@ export class PhotoCategoryServiceError extends Error {
   }
 }
 
-export default class PhotoCategoryService {
+export default class PhotoCategoryServiceProvider {
   constructor (
     private readonly data: PhotoCategoryData,
     private readonly logger: Pino.Logger
   ) {
-    this.logger.debug('PhotoCategoryService constructor called')
+    this.logger.debug('PhotoCategoryServiceProvider.constructor called')
   }
 
   private mapPhotoCategory (data: PhotoCategoryRow): PhotoCategory {
@@ -63,7 +63,7 @@ export default class PhotoCategoryService {
   }
 
   async getAll (forPublic: boolean = true): Promise<PhotoCategory[]> {
-    this.logger.debug('PhotoCategoryService getAll called')
+    this.logger.debug('PhotoCategoryServiceProvider.getAll called')
     try {
       const output = forPublic
         ? await listCacher.get('public', async () => await this.data.getAllPublic())
@@ -76,7 +76,7 @@ export default class PhotoCategoryService {
   }
 
   async getById (id: number): Promise<PhotoCategory> {
-    this.logger.debug('PhotoCategoryService getById called')
+    this.logger.debug('PhotoCategoryServiceProvider.getById called')
     z.number().positive().parse(id)
     try {
       const output = await itemCacher.get(`id-${id}`, async () => await this.data.getById(id))
@@ -88,7 +88,7 @@ export default class PhotoCategoryService {
   }
 
   async getByStub (stub: string): Promise<PhotoCategory> {
-    this.logger.debug('PhotoCategoryService getByStub called')
+    this.logger.debug('PhotoCategoryServiceProvider.getByStub called')
     z.string().min(1).parse(stub)
     try {
       const output = await itemCacher.get(`stub-${stub}`, async () => await this.data.getByStub(stub))
@@ -100,7 +100,7 @@ export default class PhotoCategoryService {
   }
 
   async create (category: PhotoCategoryCreate): Promise<PhotoCategory> {
-    this.logger.debug('PhotoCategoryService create called')
+    this.logger.debug('PhotoCategoryServiceProvider.create called')
     const { name, stub, description } = PhotoCategoryCreateSchema.parse(category)
     try {
       const output = await this.data.create(name, stub, description)
@@ -115,7 +115,7 @@ export default class PhotoCategoryService {
   }
 
   async update (toUpdate: PhotoCategoryUpdate): Promise<PhotoCategory> {
-    this.logger.debug('PhotoCategoryService update called')
+    this.logger.debug('PhotoCategoryServiceProvider.update called')
     const PhotoCategory = PhotoCategoryUpdateSchema.parse(toUpdate)
     try {
       const oldPhotoCategory = await this.data.getById(toUpdate.id)

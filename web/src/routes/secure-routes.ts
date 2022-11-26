@@ -13,11 +13,57 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
     ctx.render('photo-upload', { title: 'photo-upload' })
   })
 
+  router.get('/photo-unedited', async (ctx) => {
+    const { photo, photoCategory } = ctx.state.services
+    const image = await photo().getOldestUneditedPhoto()
+    if(image!= null){ 
+    const categories = await photoCategory().getAll()
+    const status = ctx.state.getValue('status') ?? []
+    const errors = ctx.state.getValue('errors') ?? []
+    ctx.render('photo-unedited', { categories, errors, status, image, title: 'unedited photos' })
+    }else{
+      ctx.render('photo-unedited-empty',{title: 'unedited photos'})
+    }
+  })
+
+  router.post('/photo-unedited', async (ctx) => {
+    const form = ctx.request.body as {
+      id: string
+      category: string
+      description: string
+      stub: string
+      active?: string
+      deleted?: string
+    } | undefined
+    if (form == null) throw new Error('No form data')
+
+    const errors: string[] = []
+    if (form.category == null || form.category.trim().length === 0) errors.push('Category is required')
+    if (form.description == null || form.description.trim().length === 0) errors.push('Description is required')
+    if (form.stub == null || form.stub.trim().length === 0) errors.push('Stub is required')
+
+    if (errors.length === 0) {
+      const { description, stub } = form
+      const photoId = parseInt(form.id, 10)
+      const active = form.active === 'on'
+      const deleted = form.deleted === 'on'
+      const categoryId = parseInt(form.category, 10)
+
+      const photo = ctx.state.services.photo()
+      await photo.updateUneditedPhoto(photoId, deleted, active, stub, description, categoryId)
+      ctx.state.setValue('status', ['Updated photo.'])
+    } else {
+      ctx.state.setValue('errors', errors)
+      console.log({ errors })
+    }
+    ctx.redirect('/admin/photo-unedited')
+  })
+
   router.post('/photo-upload', KoaBody({ multipart: true }), async (ctx) => {
     const { files } = ctx.request
     if (!Array.isArray(files?.file) && files?.file != null) {
       const { originalFilename, filepath } = files.file
-      const { imageService } = ctx.state.services
+      const { photo: imageService } = ctx.state.services
       await imageService().processAndSavePhoto(originalFilename as string, filepath)
     }
     ctx.body = { success: true }
@@ -30,7 +76,7 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
 
   router.get('/photo-categories', async (ctx) => {
     const status = ctx.state.getValue('status') ?? []
-    const categories = ctx.state.services.photoCategoryService()
+    const categories = ctx.state.services.photoCategory()
     ctx.render('photo-categories', { title: 'photo categories', status, categories: await categories.getAll(false) })
   })
 
@@ -41,14 +87,10 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
   })
 
   router.post('/photo-categories/create', async (ctx) => {
-    const form = ctx.request.body
+    const form = ctx.request.body as { name: string, stub: string, description: string } | undefined
     if (form == null) throw new Error('No form data')
-
     const errors: string[] = []
-
-    const name = form.name as string | undefined ?? ''
-    const stub = form.stub as string | undefined ?? ''
-    const description = form.description as string | undefined ?? ''
+    const { name, stub, description } = form
 
     if (name.length === 0) {
       errors.push('Name is required')
@@ -60,7 +102,7 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
 
     if (errors.length === 0) {
       try {
-        const categories = ctx.state.services.photoCategoryService()
+        const categories = ctx.state.services.photoCategory()
         const category = await categories.create({ name, description, stub })
         ctx.state.setValue('status', [`Created photo category ${category.name}`])
         ctx.redirect('/admin/photo-categories')
@@ -75,14 +117,14 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
   })
 
   router.get('/photo-categories/clear-cache', async (ctx) => {
-    const categories = ctx.state.services.photoCategoryService()
+    const categories = ctx.state.services.photoCategory()
     categories.clearCache()
     ctx.redirect('/admin/photo-categories')
   })
 
   router.get('/photo-categories/:id', async (ctx) => {
     const id = parseInt(ctx.params.id ?? '-1')
-    const categories = ctx.state.services.photoCategoryService()
+    const categories = ctx.state.services.photoCategory()
     const status = ctx.state.getValue('status') ?? []
     const errors = ctx.state.getValue('errors') ?? []
     ctx.render('photo-category', { title: 'create photo category', status, errors, category: await categories.getById(id) })
@@ -90,16 +132,18 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
 
   router.post('/photo-categories/:id', async (ctx) => {
     const id = parseInt(ctx.params.id ?? '-1')
-    const form = ctx.request.body
+    const form = ctx.request.body as {
+      name: string
+      stub: string
+      description: string
+      active: boolean
+      deleted: boolean
+    } | undefined
     if (form == null) throw new Error('No form data')
 
     const errors: string[] = []
 
-    const name = form.name as string | undefined ?? ''
-    const stub = form.stub as string | undefined ?? ''
-    const description = form.description as string | undefined ?? ''
-    const active = form.active != null
-    const deleted = form.deleted != null
+    const { name, stub, description, active, deleted } = form
 
     if (name.length === 0) {
       errors.push('Name is required')
@@ -111,7 +155,7 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
 
     if (errors.length === 0) {
       try {
-        const categories = ctx.state.services.photoCategoryService()
+        const categories = ctx.state.services.photoCategory()
         const category = await categories.update({ name, description, stub, active, deleted, id })
         ctx.state.setValue('status', [`Updated photo category ${category.name}`])
         ctx.redirect('/admin/photo-categories')

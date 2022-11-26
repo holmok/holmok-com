@@ -11,7 +11,7 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
   })
 
   router.get('/ready', async (ctx) => {
-    const system = ctx.state.services.systemService()
+    const system = ctx.state.services.system()
     await system.ready()
     ctx.body = { ready: true, timestamp: new Date().toISOString() }
   })
@@ -37,7 +37,7 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
   })
 
   router.post('/login', async (ctx) => {
-    const form = ctx.request.body
+    const form = ctx.request.body as { email: string, password: string } | undefined
     if (form == null) throw new Error('No form data')
 
     const errors: string[] = []
@@ -57,11 +57,11 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
 
     if (errors.length === 0) {
       try {
-        const users = ctx.state.services.userService()
+        const users = ctx.state.services.user()
         const userLogin = { email, password }
         const user = await users.getByLogIn(userLogin)
         ctx.state.setUserToken(user)
-        ctx.log.debug(`logged in user ${user.id}`)
+        ctx.log.debug(`logged in user ${user.id.toString(10)}`)
         ctx.state.setValue('status', ['You are logged in.'])
         ctx.redirect('/admin')
       } catch (error: any) {

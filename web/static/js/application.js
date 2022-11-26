@@ -81,6 +81,7 @@ function runApp () {
         u('#upload-btn').removeClass('hidden')
         u('#preview-area').children().remove()
         _files = []
+        window.location.assign('/admin/photo-unedited')
       }
     }
 

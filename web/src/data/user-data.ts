@@ -34,7 +34,7 @@ export enum UserDataErrorCode {
   UnknownError = 'Unknown error'
 }
 
-type PGError = Error & {constraint: string, code: string}
+type PGError = Error & { constraint: string, code: string }
 
 export class UserDataError extends Error {
   private readonly _code: UserDataErrorCode
@@ -56,16 +56,16 @@ export class UserDataError extends Error {
   }
 }
 
-export default class UserData {
+export default class UserDataProvider {
   constructor (
     private readonly db: Knex,
     private readonly logger: Pino.Logger
   ) {
-    this.logger.debug('UserData constructor called')
+    this.logger.debug('UserDataProvider.constructor called')
   }
 
   async getAll (): Promise<UserRow[]> {
-    this.logger.debug('UserData getAll called')
+    this.logger.debug('UserDataProvider.getAll called')
     try {
       const output = await this.db<UserRow>('users')
       return output
@@ -76,7 +76,7 @@ export default class UserData {
   }
 
   async getById (id: number): Promise<UserRow | undefined> {
-    this.logger.debug('UserData getById called')
+    this.logger.debug('UserDataProvider.getById called')
     try {
       const output = await this.db<UserRow>('users')
         .where({ id, deleted: false })
@@ -89,7 +89,7 @@ export default class UserData {
   }
 
   async getByEmail (email: string): Promise<UserRow | undefined> {
-    this.logger.debug('UserData getByEmail called')
+    this.logger.debug('UserDataProvider.getByEmail called')
     try {
       const output = await this.db<UserRow>('users')
         .where({ email, deleted: false })
@@ -102,7 +102,7 @@ export default class UserData {
   }
 
   async getByUsername (username: string): Promise<UserRow | undefined> {
-    this.logger.debug('UserData getByUsername called')
+    this.logger.debug('UserDataProvider.getByUsername called')
     try {
       const output = await this.db<UserRow>('users')
         .where({ username, deleted: false })
@@ -115,7 +115,7 @@ export default class UserData {
   }
 
   async getByStub (stub: string): Promise<UserRow | undefined> {
-    this.logger.debug('UserData getByStub called')
+    this.logger.debug('UserDataProvider.getByStub called')
     try {
       const output = await this.db<UserRow>('users')
         .where({ stub, deleted: false })
@@ -128,7 +128,7 @@ export default class UserData {
   }
 
   async getByLogIn (email: string, passwordHash: string): Promise<UserRow | undefined> {
-    this.logger.debug('UserData getByLogIn called')
+    this.logger.debug('UserDataProvider.getByLogIn called')
     try {
       const output = await this.db<UserRow>('users')
         .where({ email, passwordHash, active: true, deleted: false })
@@ -141,7 +141,7 @@ export default class UserData {
   }
 
   async create (username: string, stub: string, email: string, passwordHash: string): Promise<UserRow> {
-    this.logger.debug('UserData create called')
+    this.logger.debug('UserDataProvider.create called')
     try {
       const output = await this.db<UserRow>('users')
         .insert({ username, stub, email, passwordHash, active: false, deleted: false })
@@ -154,7 +154,7 @@ export default class UserData {
   }
 
   async update (user: UserRowUpdate): Promise<UserRow | undefined> {
-    this.logger.debug('UserData update called')
+    this.logger.debug('UserDataProvider.update called')
     const data = UserRowUpdateSchema.parse(user)
     try {
       const output = await this.db<UserRow>('users')

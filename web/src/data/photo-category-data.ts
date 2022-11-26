@@ -30,7 +30,7 @@ export enum PhotoCategoryDataErrorCode {
   UnknownError = 'Unknown error'
 }
 
-type PGError = Error & {constraint: string, code: string}
+type PGError = Error & { constraint: string, code: string }
 
 export class PhotoCategoryDataError extends Error {
   private readonly _code: PhotoCategoryDataErrorCode
@@ -48,16 +48,16 @@ export class PhotoCategoryDataError extends Error {
   }
 }
 
-export default class PhotoCategoryData {
+export default class PhotoCategoryDataProvider {
   constructor (
     private readonly db: Knex,
     private readonly logger: Pino.Logger
   ) {
-    this.logger.debug('PhotoCategoryData constructor called')
+    this.logger.debug('PhotoCategoryDataProvider.constructor called')
   }
 
   async getAll (): Promise<PhotoCategoryRow[]> {
-    this.logger.debug('PhotoCategoryData getAll called')
+    this.logger.debug('PhotoCategoryDataProvider.getAll called')
     try {
       const output = await this.db<PhotoCategoryRow>('photo_categories')
         .orderBy('name')
@@ -69,7 +69,7 @@ export default class PhotoCategoryData {
   }
 
   async getAllPublic (): Promise<PhotoCategoryRow[]> {
-    this.logger.debug('PhotoCategoryData getAll called')
+    this.logger.debug('PhotoCategoryDataProvider.getAllPublic called')
     try {
       const output = await this.db<PhotoCategoryRow>('photo_categories')
         .where({ active: true, deleted: false })
@@ -82,7 +82,7 @@ export default class PhotoCategoryData {
   }
 
   async getById (id: number): Promise<PhotoCategoryRow | undefined> {
-    this.logger.debug('PhotoCategoryData getById called')
+    this.logger.debug('PhotoCategoryDataProvider.getById called')
     try {
       const output = await this.db<PhotoCategoryRow>('photo_categories')
         .where({ id })
@@ -95,7 +95,7 @@ export default class PhotoCategoryData {
   }
 
   async getByStub (stub: string): Promise<PhotoCategoryRow | undefined> {
-    this.logger.debug('PhotoCategoryData getByStub called')
+    this.logger.debug('PhotoCategoryDataProvider.getByStub called')
     try {
       const output = await this.db<PhotoCategoryRow>('photo_categories')
         .where({ stub, deleted: false })
@@ -108,7 +108,7 @@ export default class PhotoCategoryData {
   }
 
   async create (name: string, stub: string, description?: string): Promise<PhotoCategoryRow> {
-    this.logger.debug('PhotoCategoryData create called')
+    this.logger.debug('PhotoCategoryDataProvider.create called')
     try {
       const output = await this.db<PhotoCategoryRow>('photo_categories')
         .insert({ name, stub, description, active: false, deleted: false })
@@ -121,7 +121,7 @@ export default class PhotoCategoryData {
   }
 
   async update (category: PhotoCategoryRowUpdate): Promise<PhotoCategoryRow | undefined> {
-    this.logger.debug('PhotoCategoryData update called')
+    this.logger.debug('PhotoCategoryDataProvider.update called')
     const data = PhotoCategoryRowUpdateSchema.parse(category)
     try {
       const output = await this.db<PhotoCategoryRow>('photo_categories')

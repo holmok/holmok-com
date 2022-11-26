@@ -1,0 +1,7 @@
+{{extend '../layouts/basic.art'}}
+{{block 'content'}}
+<h1>Latest Unedited Photo</h1>
+<div class="centered">
+  All photos edited.<br>Go back to <a href="/admin">admin</a>.
+</div>
+{{/block}}

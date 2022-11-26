@@ -2,16 +2,16 @@ import Pino from 'pino'
 import Config from 'config'
 import Data from '../data'
 
-import UserService from './user-service'
-import PhotoCategoryService from './photo-category-service'
-import SystemService from './system-service'
-import ImageService from './image-service'
+import UserServiceProvider from './user-service'
+import PhotoCategoryServiceProvider from './photo-category-service'
+import SystemServiceProvider from './system-service'
+import PhotoServiceProvider from './photo-service'
 
 export interface ServiceProviders {
-  photoCategoryService: () => PhotoCategoryService
-  userService: () => UserService
-  systemService: () => SystemService
-  imageService: () => ImageService
+  photoCategory: () => PhotoCategoryServiceProvider
+  user: () => UserServiceProvider
+  system: () => SystemServiceProvider
+  photo: () => PhotoServiceProvider
   stop: () => Promise<void>
 }
 
@@ -19,10 +19,10 @@ export default function services (config: Config.IConfig, logger: Pino.Logger): 
   logger.info('services initialize called')
   const data = Data(config, logger)
   return {
-    userService: () => new UserService(data.userData(), logger, config),
-    photoCategoryService: () => new PhotoCategoryService(data.photoCategoryData(), logger),
-    systemService: () => new SystemService(data.systemData(), logger),
-    imageService: () => new ImageService(data.imageData(), logger),
+    user: () => new UserServiceProvider(data.user(), logger, config),
+    photoCategory: () => new PhotoCategoryServiceProvider(data.photoCategory(), logger),
+    system: () => new SystemServiceProvider(data.system(), logger),
+    photo: () => new PhotoServiceProvider(data.photo(), logger),
     stop: async () => await data.stop()
   }
 }
