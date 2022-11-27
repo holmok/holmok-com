@@ -11,6 +11,7 @@ const photoCategorySchema = z.object({
   name: z.string(),
   stub: z.string(),
   description: z.string().optional(),
+  photoId: z.number().optional(),
   active: z.boolean(),
   deleted: z.boolean(),
   created: z.date()
@@ -23,6 +24,7 @@ const PhotoCategoryUpdateSchema = z.object({
   name: z.string().optional(),
   stub: z.string().optional(),
   description: z.string().optional(),
+  photoId: z.number().optional(),
   active: z.boolean().optional(),
   deleted: z.boolean().optional()
 })
@@ -58,7 +60,8 @@ export default class PhotoCategoryServiceProvider {
       description: data.description,
       active: data.active,
       deleted: data.deleted,
-      created: data.created
+      created: data.created,
+      photoId: data.photoId
     }
   }
 
@@ -125,6 +128,7 @@ export default class PhotoCategoryServiceProvider {
         stub: PhotoCategory.stub ?? oldPhotoCategory.stub,
         description: PhotoCategory.description ?? oldPhotoCategory.description,
         name: PhotoCategory.name ?? oldPhotoCategory.name,
+        photoId: (PhotoCategory.photoId ?? oldPhotoCategory.photoId) ?? undefined,
         active: PhotoCategory.active ?? oldPhotoCategory.active,
         deleted: PhotoCategory.deleted ?? oldPhotoCategory.deleted
       })
@@ -133,6 +137,7 @@ export default class PhotoCategoryServiceProvider {
       listCacher.reset()
       return this.mapPhotoCategory(output)
     } catch (error) {
+      this.logger.error(error)
       if (error instanceof PhotoCategoryDataError) {
         throw new PhotoCategoryServiceError(error.code)
       }

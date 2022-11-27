@@ -85,6 +85,32 @@ export default class PhotoDataProvider {
     }
   }
 
+  async getByCategoryId (categoryId: number): Promise<PhotoRow[]> {
+    this.logger.debug('PhotoDataProvider.getByCategoryId called')
+    try {
+      const output = await this.db<PhotoRow>('photos')
+        .orderBy('name')
+        .where({ categoryId })
+      return output
+    } catch (error) {
+      this.logger.error(error, 'Failed to get category photos')
+      throw new PhotoDataError('Failed to get category photos', error as PGError)
+    }
+  }
+
+  async getByCategoryIdPublic (categoryId: number): Promise<PhotoRow[]> {
+    this.logger.debug('PhotoDataProvider.getByCategoryIdPublic called')
+    try {
+      const output = await this.db<PhotoRow>('photos')
+        .orderBy('name')
+        .where({ categoryId, active: true, deleted: false })
+      return output
+    } catch (error) {
+      this.logger.error(error, 'Failed to get category photos')
+      throw new PhotoDataError('Failed to get category photos', error as PGError)
+    }
+  }
+
   async getById (id: number): Promise<PhotoRow | undefined> {
     this.logger.debug('PhotoDataProvider.getById called')
     try {

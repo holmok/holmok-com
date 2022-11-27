@@ -183,9 +183,10 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
   router.get('/photo-categories/:id', async (ctx) => {
     const id = parseInt(ctx.params.id ?? '-1')
     const categories = ctx.state.services.photoCategory()
+    const photos = ctx.state.services.photo()
     const status = ctx.state.getValue('status') ?? []
     const errors = ctx.state.getValue('errors') ?? []
-    ctx.render('photo-category', { title: 'create photo category', status, errors, category: await categories.getById(id) })
+    ctx.render('photo-category', { title: 'create photo category', status, errors, category: await categories.getById(id), photos: await photos.getByCategory(id, true) })
   })
 
   router.post('/photo-categories/:id', async (ctx) => {
@@ -194,6 +195,7 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
       name: string
       stub: string
       description: string
+      photoId?: string
       active?: string
       deleted?: string
     } | undefined
@@ -204,6 +206,7 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
     const { name, stub, description } = form
     const active = form.active === 'on'
     const deleted = form.deleted === 'on'
+    const photoId = form.photoId != null ? parseInt(form.photoId, 10) : undefined
 
     if (name.length === 0) {
       errors.push('Name is required')
@@ -216,16 +219,17 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
     if (errors.length === 0) {
       try {
         const categories = ctx.state.services.photoCategory()
-        const category = await categories.update({ name, description, stub, active, deleted, id })
+
+        const category = await categories.update({ name, description, stub, active, deleted, id, photoId })
         ctx.state.setValue('status', [`Updated photo category ${category.name}`])
         ctx.redirect('/admin/photo-categories')
       } catch (error: any) {
         ctx.state.setValue('errors', [error.message])
-        ctx.redirect('/admin/photo-categories/create')
+        ctx.redirect(`/admin/photo-categories/${id}`)
       }
     } else {
       ctx.state.setValue('errors', errors)
-      ctx.redirect('/admin/photo-categories/create')
+      ctx.redirect(`/admin/photo-categories/${id}`)
     }
   })
 

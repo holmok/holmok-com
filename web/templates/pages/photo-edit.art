@@ -21,12 +21,12 @@
 <input class="u-full-width" type="text" placeholder="Image stub..." id="stub" name="stub" value="{{image.stub}}">
 <label for="destription">Description</label>
 <textarea class="u-full-width" placeholder="Image description" id="destription" name="description">{{image.description}}</textarea>
- <label for="category">Categoy</label>
-      <select class="u-full-width multiselect" id="category" name="category">
-        {{each categories category}}
-        <option {{category.id === image.categoryId ? 'selected' : ''}} value="{{category.id}}">{{category.name}} - {{category.id}}/{{image.categoryId}}</option>
-        {{/each}}
-      </select>
+<label for="category">Category</label>
+<select class="u-full-width" id="category" name="category">
+  {{each categories category}}
+  <option {{category.id === image.categoryId ? 'selected' : ''}} value="{{category.id}}">{{category.name}}</option>
+  {{/each}}
+</select>
 <label class="u-full-width">
 <input type="checkbox" {{image.active ? 'checked' : ''}} name="active" id="active" value="on">
 <span class="active">Active</span>

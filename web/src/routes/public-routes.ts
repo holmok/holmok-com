@@ -16,6 +16,28 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
     ctx.body = { ready: true, timestamp: new Date().toISOString() }
   })
 
+  router.get('/photos', async (ctx) => {
+    const categories = ctx.state.services.photoCategory()
+    const photos = ctx.state.services.photo()
+
+    const categoriesList = await categories.getAll(true)
+    const viewCategories = []
+    for (const category of categoriesList) {
+      const item: any = { ...category }
+      console.log('category.photoId', category.photoId)
+      if (category.photoId != null) {
+        console.log('category.photoId', category.photoId)
+        const photo = await photos.getById(category.photoId)
+        if (photo != null) {
+          item.thumb = `https://static.holmok.com/photos/600/${photo.name}-600.jpg`
+        }
+      }
+      console.log(item)
+      viewCategories.push(item)
+    }
+    ctx.render('view-photos', { title: 'photos', categories: viewCategories })
+  })
+
   router.get('/ok', async (ctx) => {
     ctx.body = { status: 'ok', timestamp: new Date().toISOString() }
   })

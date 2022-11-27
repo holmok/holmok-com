@@ -7,6 +7,7 @@ const PhotoCategoryRowSchema = z.object({
   stub: z.string(),
   name: z.string(),
   description: z.string().optional(),
+  photoId: z.number().optional(),
   active: z.boolean(),
   deleted: z.boolean(),
   created: z.date()
@@ -18,6 +19,7 @@ const PhotoCategoryRowUpdateSchema = z.object({
   id: z.number(),
   stub: z.string(),
   name: z.string(),
+  photoId: z.number().optional(),
   description: z.string().optional(),
   active: z.boolean(),
   deleted: z.boolean()

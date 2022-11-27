@@ -11,6 +11,14 @@
 <input class="u-full-width" type="text" placeholder="Category stub..." id="stub" name="stub" value="{{category?.stub}}">
 <label for="destription">Description</label>
 <textarea class="u-full-width" placeholder="Category description" id="destription" name="description">{{category?.description}}</textarea>
+{{if photos != null && photos.length > 0}}
+<label for="photoId">Category Thumbnail</label>
+<select class="u-full-width" id="photoId" name="photoId">
+  {{each photos photo}}
+  <option {{category.photoId === photo.id ? 'selected' : ''}} value="{{photo.id}}">{{photo.stub}}</option>
+  {{/each}}
+</select>
+{{/if}}
 <div class="row">
 <div class="two columns">
 {{if category}}

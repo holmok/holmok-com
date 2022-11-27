@@ -307,6 +307,31 @@ a.plug {
   vertical-align: top;
 }
 
+.categories .category {
+  height: auto;
+  text-align: center;
+  padding: 1%;
+  margin: 1%;
+  vertical-align: top;
+  width: 96%;
+  border: 1px #ddd solid;
+  box-shadow: 0 0 30px rgba(0,0,0,0.1);
+}
+
+.categories h2 a {
+  color: black;
+  font-weight: 900;
+  text-decoration: none; 
+  text-transform: uppercase;
+  letter-spacing: 0.3rem;
+}
+
+.categories h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+}
+
 .actions {
   margin: 10px 0;
 }
@@ -344,9 +369,32 @@ nav.mobile {
   nav.mobile {
     display: none;
   }
-}
+  .categories .category {
+    width: 45%;
+    height: auto;
+    text-align: center;
+    padding: 1%;
+    margin: 1%;
+    vertical-align: top;
+    float: left;
+    border: 1px #ddd solid;
+    box-shadow: 0 0 30px rgba(0,0,0,0.1);
 
+  }
+}
+.categories .category p {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #666;
+}
 img {
   border: 1px #ddd solid;
   box-shadow: 0 0 30px rgba(0,0,0,0.1);
+}
+
+img.thumb {
+  border: 0;
+  box-shadow: none;
+  height: 300px;
 }

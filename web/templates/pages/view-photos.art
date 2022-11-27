@@ -1,0 +1,12 @@
+{{extend '../layouts/basic.art'}}
+{{block 'content'}}
+<div class="categories">
+{{each categories category}}
+<div class="category">
+    <h2><a href="/photos/{{category.id}}">{{category.name}}</a></h2>
+    <p>{{category.description}}</p>
+    <a href="/photos/{{category.id}}"><img class="u-max-full-width thumb" src="{{category.thumb}}" alt="{{category.name}}" /></a>
+</div>
+{{/each}}
+</div>
+{{/block}}

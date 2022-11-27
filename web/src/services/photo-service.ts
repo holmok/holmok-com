@@ -150,6 +150,16 @@ export default class PhotoServiceProvider {
     return output.map(this.mapRowToPhoto)
   }
 
+  async getByCategory (categoryId: number, forPublic: boolean = true): Promise<Photo[]> {
+    this.logger.debug('getByCategory.getAll called')
+
+    const output = forPublic
+      ? await listCacher.get(`public_${categoryId}`, async () => await this.data.getByCategoryIdPublic(categoryId))
+      : await listCacher.get(`all_${categoryId}`, async () => await this.data.getByCategoryId(categoryId))
+    if (output == null) { return [] }
+    return output.map(this.mapRowToPhoto)
+  }
+
   clearCache (): void {
     listCacher.reset()
     itemCacher.reset()
