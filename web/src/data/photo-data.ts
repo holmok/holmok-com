@@ -72,8 +72,6 @@ export default class PhotoDataProvider {
     }
   }
 
-
-
   async getAllPublic (): Promise<PhotoRow[]> {
     this.logger.debug('PhotoDataProvider.getAll called')
     try {

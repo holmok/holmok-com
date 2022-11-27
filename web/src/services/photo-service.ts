@@ -128,14 +128,13 @@ export default class PhotoServiceProvider {
     })
   }
 
-
-  async getById (id:number): Promise<Photo | undefined> {
+  async getById (id: number): Promise<Photo | undefined> {
     this.logger.debug('PhotoServiceProvider.getById called')
     const output = await itemCacher.get(`photo_id_${id}`, async () => await this.data.getById(id))
     return output == null ? undefined : this.mapRowToPhoto(output)
   }
 
-  async getByStub (stub:string): Promise<Photo | undefined> {
+  async getByStub (stub: string): Promise<Photo | undefined> {
     this.logger.debug('PhotoServiceProvider.getByStub called')
     const output = await itemCacher.get(`photo_stub_${stub}`, async () => await this.data.getByStub(stub))
     return output == null ? undefined : this.mapRowToPhoto(output)
@@ -144,12 +143,11 @@ export default class PhotoServiceProvider {
   async getAll (forPublic: boolean = true): Promise<Photo[]> {
     this.logger.debug('PhotoServiceProvider.getAll called')
 
-      const output = forPublic
-        ? await listCacher.get('public', async () => await this.data.getAllPublic())
-        : await listCacher.get('all', async () => await this.data.getAll())
-      if (output == null) { return [] }
-      return output.map(this.mapRowToPhoto)
-
+    const output = forPublic
+      ? await listCacher.get('public', async () => await this.data.getAllPublic())
+      : await listCacher.get('all', async () => await this.data.getAll())
+    if (output == null) { return [] }
+    return output.map(this.mapRowToPhoto)
   }
 
   clearCache (): void {

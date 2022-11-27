@@ -3,9 +3,7 @@ import KoaBody from 'koa-body'
 import { ServerContext, ServerContextState } from '../middleware'
 import { Authorize } from '../middleware/auth-handler'
 
-
-
-export default function PublicRoutes(): KoaRouter<ServerContextState, ServerContext> {
+export default function PublicRoutes (): KoaRouter<ServerContextState, ServerContext> {
   const router = new KoaRouter<ServerContextState, ServerContext>()
 
   router.use(Authorize())
@@ -66,14 +64,14 @@ export default function PublicRoutes(): KoaRouter<ServerContextState, ServerCont
       const categoryId = parseInt(form.category, 10)
 
       const photo = ctx.state.services.photo()
-      console.log('photo', {photoId, deleted, active, stub, description, categoryId})
+      console.log('photo', { photoId, deleted, active, stub, description, categoryId })
       await photo.updatePhoto(photoId, deleted, active, stub, description, categoryId)
       ctx.state.setValue('status', ['Edited photo.'])
     } else {
       ctx.state.setValue('errors', errors)
       console.log({ errors })
     }
-    ctx.redirect(`/admin/photos`)
+    ctx.redirect('/admin/photos')
   })
 
   router.get('/photo-unedited', async (ctx) => {
