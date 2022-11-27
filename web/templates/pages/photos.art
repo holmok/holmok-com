@@ -1,0 +1,36 @@
+{{extend '../layouts/basic.art'}}
+{{block 'content'}}
+<h1>Photo Management</h1>
+{{include '../partials/errors.art'}}
+{{include '../partials/status.art'}}
+{{if photos && photos.length > 0}}
+<table class="u-full-width">
+<thead>
+<tr>
+<th>&nbsp</th>
+<th class="wide-show-column">STUB</th>
+<th>DESCRIPTION</th>
+<th>ACTIVE</th>
+<th class="wide-show-column">DELETED</th>
+</tr>
+</thead>
+<tbody>
+{{each photos photo}}
+<tr>
+<td class="col-min edit"><a class='plug' href="/admin/photos/{{photo.id}}">edit</a></td>
+<td class="col-min wide-show-column">{{photo.stub}}</td>
+<td>{{photo.description}}</td>
+<td class="col-min center">{{if photo.active}}✓{{else}}&nbsp;{{/if}}</td>
+<td class="col-min center wide-show-column">{{if photo.deleted}}✓{{else}}&nbsp;{{/if}}</td>
+</tr>
+{{/each}}
+</tbody>
+</table>
+<div class="center">
+     <a href="/admin/photo-upload" class="button">Upload Photos</a>
+     <a href="/admin/photos/clear-cache" class="button">Clear Cache</a>
+</div>
+{{else}}
+<p class="centered"><em>~ No photos found. ~</em></p>
+{{/if}}
+{{/block}}

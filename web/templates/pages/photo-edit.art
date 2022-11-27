@@ -1,0 +1,44 @@
+{{extend '../layouts/basic.art'}}
+{{block 'content'}}
+<h1>Latest Unedited Photo</h1>
+{{include '../partials/errors.art'}}
+{{include '../partials/status.art'}}
+
+<form method="post">
+
+
+<div class="row">
+
+<div class="six columns">
+  <img src="https://static.holmok.com/photos/1200/{{image.encodedName}}-1200.jpg" class="u-full-width" alt="Latest Unedited Photo" />
+</div>
+
+<div class="six columns">
+<input type="hidden" id="id" name="id" value="{{image.id}}">
+<label for="name">Name</label>
+<input class="u-full-width" type="text" id="name" name="name" value="{{image.name}}" disabled>
+<label for="stub">Stub</label>
+<input class="u-full-width" type="text" placeholder="Image stub..." id="stub" name="stub" value="{{image.stub}}">
+<label for="destription">Description</label>
+<textarea class="u-full-width" placeholder="Image description" id="destription" name="description">{{image.description}}</textarea>
+ <label for="category">Categoy</label>
+      <select class="u-full-width multiselect" id="category" name="category">
+        {{each categories category}}
+        <option {{category.id === image.categoryId ? 'selected' : ''}} value="{{category.id}}">{{category.name}} - {{category.id}}/{{image.categoryId}}</option>
+        {{/each}}
+      </select>
+<label class="u-full-width">
+<input type="checkbox" {{image.active ? 'checked' : ''}} name="active" id="active" value="on">
+<span class="active">Active</span>
+</label>
+<label class="u-full-width">
+<input type="checkbox" {{image.deleted ? 'checked' : ''}} name="deleted" id="deleted" value="on">
+<span class="deleted">Deleted</span>
+</label>
+<input class="button-primary" type="submit" value="Submit">
+<a href="/admin/photos" class="button">Cancel</a>
+</div>
+</div>
+</form>
+
+{{/block}}
