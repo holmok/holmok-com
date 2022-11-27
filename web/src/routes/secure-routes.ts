@@ -13,6 +13,16 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
     ctx.render('photo-upload', { title: 'photo-upload' })
   })
 
+  router.post('/photo-upload', KoaBody({ multipart: true }), async (ctx) => {
+    const { files } = ctx.request
+    if (!Array.isArray(files?.file) && files?.file != null) {
+      const { originalFilename, filepath } = files.file
+      const { photo: imageService } = ctx.state.services
+      await imageService().processAndSavePhoto(originalFilename as string, filepath)
+    }
+    ctx.body = { success: true }
+  })
+
   router.get('/photo-unedited', async (ctx) => {
     const { photo, photoCategory } = ctx.state.services
     const image = await photo().getOldestUneditedPhoto()
@@ -57,16 +67,6 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
       console.log({ errors })
     }
     ctx.redirect('/admin/photo-unedited')
-  })
-
-  router.post('/photo-upload', KoaBody({ multipart: true }), async (ctx) => {
-    const { files } = ctx.request
-    if (!Array.isArray(files?.file) && files?.file != null) {
-      const { originalFilename, filepath } = files.file
-      const { photo: imageService } = ctx.state.services
-      await imageService().processAndSavePhoto(originalFilename as string, filepath)
-    }
-    ctx.body = { success: true }
   })
 
   router.get('/', async (ctx) => {
@@ -136,14 +136,16 @@ export default function PublicRoutes (): KoaRouter<ServerContextState, ServerCon
       name: string
       stub: string
       description: string
-      active: boolean
-      deleted: boolean
+      active?: string
+      deleted?: string
     } | undefined
     if (form == null) throw new Error('No form data')
 
     const errors: string[] = []
 
-    const { name, stub, description, active, deleted } = form
+    const { name, stub, description } = form
+    const active = form.active === 'on'
+    const deleted = form.deleted === 'on'
 
     if (name.length === 0) {
       errors.push('Name is required')
