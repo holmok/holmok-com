@@ -72,6 +72,21 @@ export default class PhotoDataProvider {
     }
   }
 
+
+
+  async getAllPublic (): Promise<PhotoRow[]> {
+    this.logger.debug('PhotoDataProvider.getAll called')
+    try {
+      const output = await this.db<PhotoRow>('photos')
+        .orderBy('name')
+        .where({ active: true, deleted: false })
+      return output
+    } catch (error) {
+      this.logger.error(error, 'Failed to get all photos')
+      throw new PhotoDataError('Failed to get all photos', error as PGError)
+    }
+  }
+
   async getById (id: number): Promise<PhotoRow | undefined> {
     this.logger.debug('PhotoDataProvider.getById called')
     try {

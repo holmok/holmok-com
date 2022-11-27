@@ -1,9 +1,13 @@
 
 import Pino from 'pino'
 import Sharp from 'sharp'
-import PhotoData from '../data/photo-data'
+import PhotoData, { PhotoRow } from '../data/photo-data'
 import Uniquey from 'uniquey'
 import { Storage } from '@google-cloud/storage'
+import Cacher from './cacher'
+
+const listCacher = new Cacher<PhotoRow[]>(5, 60)
+const itemCacher = new Cacher<PhotoRow>(5, 60)
 
 const uniquey = new Uniquey({
   length: 16,
@@ -15,7 +19,9 @@ export interface Photo {
   name: string
   stub: string
   description?: string
+  categoryId: number
   active: boolean
+  deleted: boolean
   encodedName: string
 }
 
@@ -33,7 +39,9 @@ export default class PhotoServiceProvider {
       name: row.name,
       stub: row.stub,
       description: row.description,
+      categoryId: row.categoryId,
       active: row.active,
+      deleted: row.deleted,
       encodedName: encodeURIComponent(row.name)
     }
   }
@@ -99,12 +107,15 @@ export default class PhotoServiceProvider {
     return this.mapRowToPhoto(result)
   }
 
-  async updateUneditedPhoto (id: number, deleted: boolean, active: boolean, stub: string, description: string, categoryId: number): Promise<void> {
-    this.logger.debug('PhotoServiceProvider.UpdateUneditedPhoto called')
+  async updatePhoto (id: number, deleted: boolean, active: boolean, stub: string, description: string, categoryId: number): Promise<void> {
+    this.logger.debug('PhotoServiceProvider.updatePhoto called')
     const oldPhoto = await this.data.getById(id)
     if (oldPhoto == null) {
       throw new Error('Photo not found')
     }
+    itemCacher.del(`photo_id_${id}`)
+    itemCacher.del(`photo_stub_${stub}`)
+    listCacher.reset()
     await this.data.update({
       id,
       description,
@@ -115,5 +126,34 @@ export default class PhotoServiceProvider {
       deleted,
       edited: true
     })
+  }
+
+
+  async getById (id:number): Promise<Photo | undefined> {
+    this.logger.debug('PhotoServiceProvider.getById called')
+    const output = await itemCacher.get(`photo_id_${id}`, async () => await this.data.getById(id))
+    return output == null ? undefined : this.mapRowToPhoto(output)
+  }
+
+  async getByStub (stub:string): Promise<Photo | undefined> {
+    this.logger.debug('PhotoServiceProvider.getByStub called')
+    const output = await itemCacher.get(`photo_stub_${stub}`, async () => await this.data.getByStub(stub))
+    return output == null ? undefined : this.mapRowToPhoto(output)
+  }
+
+  async getAll (forPublic: boolean = true): Promise<Photo[]> {
+    this.logger.debug('PhotoServiceProvider.getAll called')
+
+      const output = forPublic
+        ? await listCacher.get('public', async () => await this.data.getAllPublic())
+        : await listCacher.get('all', async () => await this.data.getAll())
+      if (output == null) { return [] }
+      return output.map(this.mapRowToPhoto)
+
+  }
+
+  clearCache (): void {
+    listCacher.reset()
+    itemCacher.reset()
   }
 }
